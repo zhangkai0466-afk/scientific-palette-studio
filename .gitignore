@@ -1,0 +1,17 @@
+.venv/
+frontend/node_modules/
+frontend/dist/
+generated/
+__pycache__/
+.pytest_cache/
+*.pyc
+*.egg-info/
+*.tsbuildinfo
+
+# 本地运行产物与日志
+.env
+.server.stdout.log
+.server.stderr.log
+output/
+outputs/
+.playwright-cli/

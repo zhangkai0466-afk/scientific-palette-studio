@@ -1,0 +1,13 @@
+.git
+.venv
+.pytest_cache
+.playwright-cli
+generated
+output
+outputs
+frontend/node_modules
+frontend/dist
+**/__pycache__
+**/*.pyc
+.server.stdout.log
+.server.stderr.log

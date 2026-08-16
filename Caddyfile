@@ -1,0 +1,18 @@
+{$DOMAIN} {
+    encode zstd gzip
+
+    @uploads path /api/data/inspect /api/render-data
+    request_body @uploads {
+        max_size 10MB
+    }
+
+    header {
+        -Server
+        X-Content-Type-Options "nosniff"
+        X-Frame-Options "DENY"
+        Referrer-Policy "strict-origin-when-cross-origin"
+        Permissions-Policy "camera=(), microphone=(), geolocation=()"
+    }
+
+    reverse_proxy app:8770
+}
