@@ -156,7 +156,10 @@ def render_data_template(
         )
         ax.set_xticks(range(size), matrix_columns[:size], rotation=35, ha="right")
         ax.set_yticks(range(size), matrix_columns[:size])
-        fig.colorbar(image, ax=ax, fraction=0.04, pad=0.03, label="Correlation")
+        colorbar = fig.colorbar(image, ax=ax, fraction=0.04, pad=0.03, label="Correlation")
+        colorbar.outline.set_visible(False)
+        for spine in colorbar.ax.spines.values():
+            spine.set_visible(False)
     elif family == "area":
         axis_column, x, series = _split_axis(numeric)
         colors = _colors(palette, len(series))

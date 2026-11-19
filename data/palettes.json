@@ -335,6 +335,131 @@
         {"name": "杏粉", "name_en": "Apricot Blush", "hex": "#ECBEAA", "role": "high"},
         {"name": "暖纸白", "name_en": "Warm Paper", "hex": "#FCEBE2", "role": "end"}
       ]
+    },
+    {
+      "id": "mist-blue-terracotta-10",
+      "name": "雾蓝陶橙",
+      "name_en": "Mist Blue Terracotta",
+      "kind": "continuous",
+      "count": 10,
+      "description": "从克制的雾蓝过渡到陶土橙红的十阶发散色带；移除近白中心节点，使中点数据在白色画布上仍保持可见，适合百分比热力图、偏差矩阵、相关性与双向效应展示。",
+      "source_note": "依据用户提供的 AI Slop Bench V1 热力图截图，从多个带百分比标注的单元格背景取样重建；为避免中点数据与白色画布混淆，按用户要求移除原 50% 近白节点；受截图缩放与压缩影响，颜色为近似值",
+      "background": "#FFFFFF",
+      "ink": "#27313A",
+      "accent_index": 9,
+      "tags": ["雾蓝", "陶橙", "发散", "热力图", "连续"],
+      "colors": [
+        {"name": "深雾蓝", "name_en": "Deep Mist Blue", "hex": "#9FB8CA", "role": "start"},
+        {"name": "雾蓝", "name_en": "Mist Blue", "hex": "#B0C5D2", "role": "low"},
+        {"name": "浅雾蓝", "name_en": "Pale Mist Blue", "hex": "#C1D2DE", "role": "low"},
+        {"name": "冰灰蓝", "name_en": "Icy Blue Grey", "hex": "#D6E0E8", "role": "low"},
+        {"name": "云灰蓝", "name_en": "Cloud Blue Grey", "hex": "#E6ECF1", "role": "low"},
+        {"name": "贝壳灰粉", "name_en": "Shell Blush", "hex": "#F1D9D1", "role": "high"},
+        {"name": "浅陶粉", "name_en": "Pale Terracotta", "hex": "#EAB9A8", "role": "high"},
+        {"name": "陶杏", "name_en": "Terracotta Apricot", "hex": "#E3987D", "role": "high"},
+        {"name": "陶土橙", "name_en": "Terracotta Orange", "hex": "#E07452", "role": "high"},
+        {"name": "深陶橙", "name_en": "Deep Terracotta", "hex": "#D9542B", "role": "end"}
+      ]
+    },
+    {
+      "id": "mint-rose-6",
+      "name": "薄荷玫瑰",
+      "name_en": "Mint Rose",
+      "kind": "continuous",
+      "count": 6,
+      "description": "从清透薄荷青经柔和浅青、浅粉过渡到玫瑰粉的六阶连续色带，适合特征效应散点、依赖图、双向变化和连续数值编码；不含近白中心色，保证中点数据在白色画布上可见。",
+      "source_note": "依据用户提供的多面板特征效应图，从四排重复色条、散点和趋势线分别取样重建；主色带排除原图近白中心，灰酒红 LOWESS 趋势线作为拓展色保留；受低分辨率与压缩影响，颜色为近似值",
+      "background": "#FFFFFF",
+      "ink": "#3F4847",
+      "accent_index": 5,
+      "tags": ["薄荷青", "玫瑰粉", "双端", "特征效应", "连续", "含拓展色"],
+      "colors": [
+        {"name": "清薄荷", "name_en": "Clear Mint", "hex": "#66C5B0", "role": "start"},
+        {"name": "水薄荷", "name_en": "Aqua Mint", "hex": "#8ED3C4", "role": "low"},
+        {"name": "薄荷雾", "name_en": "Mint Mist", "hex": "#BBE0D7", "role": "low"},
+        {"name": "玫瑰雾", "name_en": "Rose Mist", "hex": "#FCC7CC", "role": "high"},
+        {"name": "柔玫瑰", "name_en": "Soft Rose", "hex": "#FAACB8", "role": "high"},
+        {"name": "亮玫粉", "name_en": "Bright Rose", "hex": "#F892A2", "role": "end"}
+      ],
+      "extension_groups": [
+        {
+          "id": "trend-and-annotation",
+          "name": "趋势线与标注",
+          "name_en": "Trend and annotation",
+          "colors": [
+            {"name": "灰酒红", "name_en": "Dusty Wine", "hex": "#A86F78", "role": "trend"},
+            {"name": "深薄荷", "name_en": "Deep Mint", "hex": "#3F9789", "role": "annotation"},
+            {"name": "石墨灰", "name_en": "Graphite", "hex": "#4A5351", "role": "annotation"}
+          ]
+        }
+      ]
+    },
+    {
+      "id": "icy-blue-levels-4",
+      "name": "冰蓝层阶",
+      "name_en": "Icy Blue Levels",
+      "kind": "categorical",
+      "count": 4,
+      "description": "由近白冰蓝、浅雾蓝、柔和天蓝和灰调长春花蓝构成的四级有序分类色，适合分组柱状图、箱线图和带散点的统计比较；建议搭配对应深色描边使用。",
+      "source_note": "依据用户提供的 G1–G4 分组柱状图，从右上角图例和三组重复柱体取样重建；主色为柱体填充色，拓展组为按原图轮廓与散点估计的对应描边色；受低分辨率与抗锯齿影响，颜色为近似值",
+      "background": "#FFFFFF",
+      "ink": "#303943",
+      "accent_index": 3,
+      "tags": ["冰蓝", "单色层阶", "有序类别", "柱状图", "含拓展色"],
+      "colors": [
+        {"name": "冰晶白蓝", "name_en": "Crystal Ice", "hex": "#F0F3F9", "role": "group-1"},
+        {"name": "浅雾蓝", "name_en": "Pale Mist Blue", "hex": "#E4F1F9", "role": "group-2"},
+        {"name": "柔天蓝", "name_en": "Soft Sky Blue", "hex": "#C1DCEF", "role": "group-3"},
+        {"name": "灰长春花", "name_en": "Grey Periwinkle", "hex": "#A5B1D7", "role": "group-4"}
+      ],
+      "extension_groups": [
+        {
+          "id": "matched-outlines",
+          "name": "对应描边色",
+          "name_en": "Matched outlines",
+          "colors": [
+            {"name": "冰蓝描边", "name_en": "Ice Outline", "hex": "#C9DDEB", "role": "outline"},
+            {"name": "雾蓝描边", "name_en": "Mist Outline", "hex": "#A9C9E8", "role": "outline"},
+            {"name": "天蓝描边", "name_en": "Sky Outline", "hex": "#7D9FD0", "role": "outline"},
+            {"name": "长春花描边", "name_en": "Periwinkle Outline", "hex": "#596FA5", "role": "outline"}
+          ]
+        }
+      ]
+    },
+    {
+      "id": "coral-aqua-navy-4",
+      "name": "珊瑚青岚",
+      "name_en": "Coral Aqua Navy",
+      "kind": "categorical",
+      "count": 4,
+      "description": "珊瑚红、雾水青、深海军蓝与中性雾灰组成的四分类配色，适合比较草地、水体、城市等对象类别，也适合分组散点图、回归关系图及边际分布图。",
+      "source_note": "依据用户提供的 GST–LST 分组散点回归图，从草地、水体、城市的散点、虚线回归线和边际直方图重复取样重建；中性灰对应空心观测或未分类样本；受手机截图缩放与压缩影响，颜色为近似值",
+      "background": "#FFFFFF",
+      "ink": "#253247",
+      "accent_index": 0,
+      "tags": ["珊瑚红", "雾水青", "海军蓝", "分组散点", "回归", "含拓展色"],
+      "colors": [
+        {"name": "珊瑚草地", "name_en": "Coral Grass", "hex": "#E65462", "role": "primary"},
+        {"name": "雾水青", "name_en": "Misty Water", "hex": "#B5D8DA", "role": "primary"},
+        {"name": "深海军蓝", "name_en": "Deep Urban Navy", "hex": "#495C78", "role": "primary"},
+        {"name": "中性雾灰", "name_en": "Neutral Mist", "hex": "#E8E8E6", "role": "support"}
+      ],
+      "extension_groups": [
+        {
+          "id": "regression-and-bands",
+          "name": "回归线与置信带",
+          "name_en": "Regression lines and bands",
+          "colors": [
+            {"name": "深珊瑚", "name_en": "Deep Coral", "hex": "#B93854", "role": "trend"},
+            {"name": "浅珊瑚带", "name_en": "Pale Coral Band", "hex": "#F8D7DB", "role": "band"},
+            {"name": "深水青", "name_en": "Deep Aqua", "hex": "#7EA3A0", "role": "trend"},
+            {"name": "浅水青带", "name_en": "Pale Aqua Band", "hex": "#E2F1F0", "role": "band"},
+            {"name": "深海军蓝线", "name_en": "Deep Navy Line", "hex": "#263A5A", "role": "trend"},
+            {"name": "浅蓝灰带", "name_en": "Pale Navy Band", "hex": "#DCE3EC", "role": "band"},
+            {"name": "空心点描边", "name_en": "Hollow Point Outline", "hex": "#A6A8A6", "role": "outline"}
+          ]
+        }
+      ]
     }
   ]
 }

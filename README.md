@@ -1,6 +1,8 @@
 # Science Palette Studio
 
-一个本地科研配色工作台。当前包含 9 套 7、8、9、10 色方案，并按离散色库与渐变色库分类；每套色库都有 16 种由 Python/Matplotlib 重新绘制的科研图预览。
+一个本地科研配色工作台。当前包含 17 套 4、6、7、8、9、10 色方案，并按离散色库与渐变色库分类；每套色库都有 16 种由 Python/Matplotlib 重新绘制的科研图预览。
+
+完整平台采用 Python 后端，不能仅用 GitHub Pages 运行。公开部署采用 GitHub 托管代码、Ubuntu 服务器运行 Docker Compose、Caddy 提供 HTTPS，操作见 [部署指南](DEPLOYMENT.md)。当前选用武汉服务器，域名完成 ICP 备案后再公开上线。
 
 ## 功能
 
@@ -28,6 +30,8 @@
 ```
 
 然后打开 `http://127.0.0.1:8770`。
+
+Windows 日常使用由 `launch-hidden.vbs` 无窗口调用 `ensure-localhost.ps1`，在后台检查并启动本地服务。开机快捷方式使用 `wscript.exe //B //NoLogo "完整路径\launch-hidden.vbs"`；桌面快捷方式在末尾增加 `-OpenBrowser`，等待服务就绪后打开网页。服务已运行时会直接复用，不会重复启动。服务日志保存在 `.server.stdout.log` 和 `.server.stderr.log`。
 
 ## 演示数据声明
 

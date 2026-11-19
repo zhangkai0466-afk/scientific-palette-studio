@@ -2,6 +2,7 @@ import matplotlib.pyplot as plt
 
 from scientific_palette_studio.catalog import get_palette
 from scientific_palette_studio.rendering import (
+    _clustered_heatmap,
     _error_bars,
     compose_palette,
     render_chart,
@@ -22,6 +23,15 @@ def test_single_color_heatmap_renders(tmp_path) -> None:
     palette = subset_palette(get_palette("pelagic-bloom-7"), [2])
     paths = render_chart(palette, "clustered-heatmap", tmp_path)
     assert all(path.exists() and path.stat().st_size > 0 for path in paths)
+
+
+def test_heatmap_colorbar_has_no_black_frame() -> None:
+    fig = _clustered_heatmap(get_palette("mist-blue-terracotta-10"))
+    try:
+        colorbar_axis = fig.axes[-1]
+        assert all(not spine.get_visible() for spine in colorbar_axis.spines.values())
+    finally:
+        plt.close(fig)
 
 
 def test_filled_bars_do_not_have_outline() -> None:

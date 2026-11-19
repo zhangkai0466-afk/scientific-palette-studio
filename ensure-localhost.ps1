@@ -7,7 +7,7 @@ $studioRoot = $PSScriptRoot
 $pythonExe = Join-Path $studioRoot ".venv\Scripts\python.exe"
 $stdoutPath = Join-Path $studioRoot ".server.stdout.log"
 $stderrPath = Join-Path $studioRoot ".server.stderr.log"
-$healthUrl = "http://localhost:8770/api/health"
+$healthUrl = "http://127.0.0.1:8770/api/health"
 $platformUrl = "http://localhost:8770/"
 
 function Test-PlatformReady {
@@ -36,7 +36,9 @@ if (-not (Test-PlatformReady)) {
     Start-Process @startOptions
 
     $ready = $false
-    for ($attempt = 0; $attempt -lt 30; $attempt++) {
+    # Cold starts may need time to render missing chart previews.
+    $startupTimer = [System.Diagnostics.Stopwatch]::StartNew()
+    while ($startupTimer.Elapsed.TotalSeconds -lt 120) {
         Start-Sleep -Milliseconds 500
         if (Test-PlatformReady) {
             $ready = $true

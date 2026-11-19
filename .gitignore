@@ -10,6 +10,9 @@ __pycache__/
 
 # 本地运行产物与日志
 .env
+.env.*
+!.env.example
+*.log
 .server.stdout.log
 .server.stderr.log
 output/

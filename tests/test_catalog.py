@@ -3,7 +3,7 @@ from scientific_palette_studio.catalog import get_palette, load_palettes, palett
 
 def test_catalog_contains_imported_palette_counts_and_kinds() -> None:
     palettes = load_palettes()
-    assert len(palettes) == 13
+    assert len(palettes) == 17
     assert {palette.count for palette in palettes} == {4, 6, 7, 8, 9, 10}
     assert {palette.kind for palette in palettes} == {"categorical", "continuous"}
     assert all(len(palette.colors) == palette.count for palette in palettes)
@@ -76,4 +76,69 @@ def test_aqua_apricot_extension_groups_preserve_reference_values() -> None:
         ["#E9F6F7", "#BDE2EA", "#4EABC0", "#2F7F95", "#1B5666"],
         ["#FFF1E2", "#FFD7B3", "#FFA453", "#E67E22", "#B55516"],
         ["#F7F7F7", "#E5E7EB", "#CBD5E1", "#64748B", "#334155"],
+    ]
+
+
+def test_mist_blue_terracotta_preserves_visible_heatmap_scale() -> None:
+    palette = get_palette("mist-blue-terracotta-10")
+    assert palette.kind == "continuous"
+    assert palette.count == 10
+    assert palette.hex_colors == [
+        "#9FB8CA",
+        "#B0C5D2",
+        "#C1D2DE",
+        "#D6E0E8",
+        "#E6ECF1",
+        "#F1D9D1",
+        "#EAB9A8",
+        "#E3987D",
+        "#E07452",
+        "#D9542B",
+    ]
+    assert "#FAFBFB" not in palette.hex_colors
+
+
+def test_mint_rose_preserves_visible_reference_gradient_and_trend_color() -> None:
+    palette = get_palette("mint-rose-6")
+    assert palette.kind == "continuous"
+    assert palette.hex_colors == [
+        "#66C5B0",
+        "#8ED3C4",
+        "#BBE0D7",
+        "#FCC7CC",
+        "#FAACB8",
+        "#F892A2",
+    ]
+    assert "#FBFAF7" not in palette.hex_colors
+    assert [color.hex.upper() for color in palette.extension_groups[0].colors] == [
+        "#A86F78",
+        "#3F9789",
+        "#4A5351",
+    ]
+
+
+def test_icy_blue_levels_preserves_group_fills_and_matched_outlines() -> None:
+    palette = get_palette("icy-blue-levels-4")
+    assert palette.kind == "categorical"
+    assert palette.hex_colors == ["#F0F3F9", "#E4F1F9", "#C1DCEF", "#A5B1D7"]
+    assert [color.hex.upper() for color in palette.extension_groups[0].colors] == [
+        "#C9DDEB",
+        "#A9C9E8",
+        "#7D9FD0",
+        "#596FA5",
+    ]
+
+
+def test_coral_aqua_navy_preserves_group_and_regression_colors() -> None:
+    palette = get_palette("coral-aqua-navy-4")
+    assert palette.kind == "categorical"
+    assert palette.hex_colors == ["#E65462", "#B5D8DA", "#495C78", "#E8E8E6"]
+    assert [color.hex.upper() for color in palette.extension_groups[0].colors] == [
+        "#B93854",
+        "#F8D7DB",
+        "#7EA3A0",
+        "#E2F1F0",
+        "#263A5A",
+        "#DCE3EC",
+        "#A6A8A6",
     ]

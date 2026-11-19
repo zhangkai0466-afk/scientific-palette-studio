@@ -18,7 +18,7 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-test = ["pytest>=8.3,<9"]
+test = ["pytest>=8.3,<9", "httpx>=0.28,<1"]
 
 [project.scripts]
 palette-studio = "scientific_palette_studio.__main__:main"

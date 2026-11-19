@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from pathlib import Path
-from threading import Lock
+from threading import RLock
 from typing import Callable, Iterable
 
 import matplotlib
@@ -22,7 +22,7 @@ from .templates import TEMPLATES_BY_ID
 
 GENERATED_ROOT = PROJECT_ROOT / "generated" / "previews"
 FILL_EDGE = "none"
-_RENDER_LOCK = Lock()
+_RENDER_LOCK = RLock()
 
 
 @dataclass(frozen=True)
@@ -62,6 +62,7 @@ def configure_matplotlib() -> None:
             "font.size": 9.2,
             "axes.labelsize": 9.4,
             "axes.linewidth": 0.75,
+            "axes.axisbelow": True,
             "axes.spines.right": False,
             "axes.spines.top": False,
             "xtick.labelsize": 8.4,
@@ -180,6 +181,7 @@ def _new_axes(*, polar: bool = False) -> tuple[plt.Figure, plt.Axes]:
     fig, ax = plt.subplots(figsize=(6.4, 4.0), subplot_kw=subplot_kw)
     fig.patch.set_facecolor("white")
     ax.set_facecolor("white")
+    ax.set_axisbelow(True)
     return fig, ax
 
 
@@ -214,6 +216,7 @@ def _cluster_scatter(palette: Palette) -> plt.Figure:
 
 def _violin_box(palette: Palette) -> plt.Figure:
     fig, ax = _new_axes()
+    ax.axhline(0, color="#D7D8DB", linewidth=0.75, zorder=0)
     rng = _rng(palette, 20)
     data = [rng.normal(loc=np.sin(i * 0.8) * 0.35, scale=0.42 + (i % 3) * 0.08, size=100) for i in range(palette.count)]
     violins = ax.violinplot(data, showmeans=False, showmedians=False, widths=0.82)
@@ -234,7 +237,6 @@ def _violin_box(palette: Palette) -> plt.Figure:
         for artist in box[key]:
             artist.set_color("#8F939A")
             artist.set_linewidth(0.7)
-    ax.axhline(0, color="#D7D8DB", linewidth=0.75, zorder=0)
     ax.set_xticks(range(1, palette.count + 1), [f"G{i}" for i in range(1, palette.count + 1)])
     ax.set_ylabel("Standardized response")
     _finish(ax, palette)
@@ -281,14 +283,14 @@ def _histogram_density(palette: Palette) -> plt.Figure:
 
 def _response_curves(palette: Palette) -> plt.Figure:
     fig, ax = _new_axes()
+    ax.axhline(0.5, color="#C8C9CC", linewidth=0.8, linestyle=(0, (3, 2)), zorder=0)
     x = np.linspace(-3.0, 3.0, 90)
     midpoints = np.linspace(-1.55, 1.55, palette.count)
     for index, (midpoint, color) in enumerate(zip(midpoints, palette.hex_colors)):
         slope = 1.45 + 0.11 * (index % 3)
         ceiling = 0.72 + 0.035 * index
         y = ceiling / (1 + np.exp(-slope * (x - midpoint)))
-        ax.plot(x, y, color=color, linewidth=2.0, marker="o", markevery=[18, 40, 62, 84], markersize=3.5, markeredgecolor="white", markeredgewidth=0.45)
-    ax.axhline(0.5, color="#C8C9CC", linewidth=0.8, linestyle=(0, (3, 2)))
+        ax.plot(x, y, color=color, linewidth=2.0, marker="o", markevery=[18, 40, 62, 84], markersize=3.5, markeredgecolor="white", markeredgewidth=0.45, zorder=3)
     ax.set_xlabel("Log concentration")
     ax.set_ylabel("Normalized response")
     ax.set_ylim(-0.03, 1.08)
@@ -383,7 +385,7 @@ def _forest_plot(palette: Palette) -> plt.Figure:
     y = np.arange(palette.count)[::-1]
     effects = np.linspace(-0.28, 0.48, palette.count) + rng.normal(0, 0.06, palette.count)
     intervals = rng.uniform(0.12, 0.23, palette.count)
-    ax.axvline(0, color="#AEB1B6", linewidth=0.9, linestyle=(0, (3, 2)))
+    ax.axvline(0, color="#AEB1B6", linewidth=0.9, linestyle=(0, (3, 2)), zorder=0)
     for row, effect, interval, color in zip(y, effects, intervals, palette.hex_colors):
         ax.errorbar(effect, row, xerr=interval, fmt="o", color=color, ecolor=color, elinewidth=1.5, capsize=3.5, markersize=7.5, markeredgewidth=0)
     ax.set_yticks(y, [f"Study {index + 1}" for index in range(palette.count)])
@@ -437,6 +439,8 @@ def _clustered_heatmap(palette: Palette) -> plt.Figure:
         spine.set_visible(False)
     cbar = fig.colorbar(image, ax=ax, fraction=0.035, pad=0.025)
     cbar.outline.set_visible(False)
+    for spine in cbar.ax.spines.values():
+        spine.set_visible(False)
     cbar.ax.tick_params(labelsize=8.0, length=2, width=0.5)
     cbar.set_label("Scaled value", fontsize=8.6)
     return fig
@@ -470,13 +474,13 @@ def _parallel_coordinates(palette: Palette) -> plt.Figure:
     rng = _rng(palette, 90)
     dimensions = 5
     x = np.arange(dimensions)
+    for position in x:
+        ax.axvline(position, color="#D8D9DC", linewidth=0.75, zorder=0)
     for index, color in enumerate(palette.hex_colors):
         center = 0.25 + 0.5 * (index + 1) / (palette.count + 1)
         values = np.clip(center + 0.18 * np.sin(x * 1.15 + index) + rng.normal(0, 0.035, dimensions), 0.04, 0.96)
-        ax.plot(x, values, color=color, linewidth=2.0, alpha=0.9)
+        ax.plot(x, values, color=color, linewidth=2.0, alpha=0.9, zorder=3)
         ax.scatter(x, values, s=24, color=color, edgecolors=FILL_EDGE, zorder=3)
-    for position in x:
-        ax.axvline(position, color="#D8D9DC", linewidth=0.75, zorder=0)
     ax.set_xticks(x, [f"Metric {index + 1}" for index in range(dimensions)])
     ax.set_ylabel("Normalized score")
     ax.set_ylim(0, 1)
@@ -492,13 +496,14 @@ def _radial_profile(palette: Palette) -> plt.Figure:
     theta = np.linspace(0, 2 * np.pi, palette.count, endpoint=False)
     values = rng.uniform(0.58, 0.96, palette.count)
     width = 2 * np.pi / palette.count * 0.82
-    ax.bar(theta, values, width=width, bottom=0.08, color=palette.hex_colors, edgecolor="white", linewidth=1.0, alpha=0.97)
     ax.set_theta_offset(np.pi / 2)
     ax.set_theta_direction(-1)
     ax.set_xticks(theta, [f"C{i}" for i in range(1, palette.count + 1)])
     ax.set_yticks([0.25, 0.5, 0.75], ["25", "50", "75"])
     ax.set_ylim(0, 1.08)
-    ax.grid(color="#D8D9DC", linewidth=0.65, alpha=0.8)
+    ax.grid(color="#D8D9DC", linewidth=0.65, alpha=0.8, zorder=0)
+    ax.bar(theta, values, width=width, bottom=0.08, color=palette.hex_colors,
+           edgecolor="white", linewidth=1.0, alpha=0.97, zorder=3)
     ax.spines["polar"].set_visible(False)
     ax.tick_params(colors=palette.ink, pad=3)
     return fig
@@ -556,40 +561,100 @@ _RENDERERS: dict[str, Callable[[Palette], plt.Figure]] = {
 }
 
 
-def render_chart(palette: Palette, chart_id: str, output_dir: Path) -> list[Path]:
-    configure_matplotlib()
-    if chart_id not in _RENDERERS:
-        raise KeyError(chart_id)
-    output_dir.mkdir(parents=True, exist_ok=True)
-    fig = _RENDERERS[chart_id](palette)
-    if chart_id == "clustered-heatmap":
-        fig.subplots_adjust(left=0.08, right=0.9, bottom=0.14, top=0.97)
-    else:
-        fig.tight_layout(pad=1.0)
-    paths = [output_dir / f"{chart_id}.svg", output_dir / f"{chart_id}.png"]
-    fig.savefig(paths[0], facecolor="white")
-    fig.savefig(paths[1], dpi=260, facecolor="white")
-    plt.close(fig)
+def _save_figure_formats(
+    fig: plt.Figure,
+    output_dir: Path,
+    stem: str,
+    *,
+    formats: Iterable[str],
+    dpi: int,
+    background: str,
+) -> list[Path]:
+    normalized = tuple(dict.fromkeys(str(value).strip().lower() for value in formats))
+    unsupported = sorted(set(normalized) - {"svg", "png", "pdf"})
+    if not normalized or unsupported:
+        raise ValueError(f"Unsupported output formats: {unsupported or normalized}")
+    if dpi < 72 or dpi > 1200:
+        raise ValueError("dpi must be between 72 and 1200")
+    paths: list[Path] = []
+    for output_format in normalized:
+        path = output_dir / f"{stem}.{output_format}"
+        options = {"dpi": dpi} if output_format == "png" else {}
+        fig.savefig(path, facecolor=background, **options)
+        paths.append(path)
     return paths
 
 
-def render_template(palette: Palette, template_id: str, output_dir: Path) -> list[Path]:
+def render_chart(
+    palette: Palette,
+    chart_id: str,
+    output_dir: Path,
+    *,
+    formats: Iterable[str] = ("svg", "png"),
+    dpi: int = 260,
+    figsize: tuple[float, float] = (6.4, 4.0),
+    background: str | None = None,
+) -> list[Path]:
+    with _RENDER_LOCK:
+        configure_matplotlib()
+        if chart_id not in _RENDERERS:
+            raise KeyError(chart_id)
+        if len(figsize) != 2 or any(float(value) <= 0 for value in figsize):
+            raise ValueError("figsize must contain two positive values")
+        output_dir.mkdir(parents=True, exist_ok=True)
+        fig = _RENDERERS[chart_id](palette)
+        fig.set_size_inches(float(figsize[0]), float(figsize[1]), forward=True)
+        facecolor = background or palette.background
+        fig.patch.set_facecolor(facecolor)
+        for ax in fig.axes:
+            ax.set_facecolor(facecolor)
+        if chart_id == "clustered-heatmap":
+            fig.subplots_adjust(left=0.08, right=0.9, bottom=0.14, top=0.97)
+        else:
+            fig.tight_layout(pad=1.0)
+        try:
+            return _save_figure_formats(
+                fig, output_dir, chart_id, formats=formats, dpi=dpi, background=facecolor,
+            )
+        finally:
+            plt.close(fig)
+
+
+def render_template(
+    palette: Palette,
+    template_id: str,
+    output_dir: Path,
+    *,
+    formats: Iterable[str] = ("svg", "png"),
+    dpi: int = 260,
+    figsize: tuple[float, float] = (6.4, 4.0),
+    background: str | None = None,
+) -> list[Path]:
     """Render one Origin-inspired template using its registered local renderer."""
     template = TEMPLATES_BY_ID.get(template_id)
     if template is None:
         raise KeyError(template_id)
-    configure_matplotlib()
-    output_dir.mkdir(parents=True, exist_ok=True)
-    fig = _RENDERERS[template.renderer](palette)
-    if template.renderer == "clustered-heatmap":
-        fig.subplots_adjust(left=0.08, right=0.9, bottom=0.14, top=0.97)
-    else:
-        fig.tight_layout(pad=1.0)
-    paths = [output_dir / f"{template_id}.svg", output_dir / f"{template_id}.png"]
-    fig.savefig(paths[0], facecolor="white")
-    fig.savefig(paths[1], dpi=260, facecolor="white")
-    plt.close(fig)
-    return paths
+    with _RENDER_LOCK:
+        configure_matplotlib()
+        if len(figsize) != 2 or any(float(value) <= 0 for value in figsize):
+            raise ValueError("figsize must contain two positive values")
+        output_dir.mkdir(parents=True, exist_ok=True)
+        fig = _RENDERERS[template.renderer](palette)
+        fig.set_size_inches(float(figsize[0]), float(figsize[1]), forward=True)
+        facecolor = background or palette.background
+        fig.patch.set_facecolor(facecolor)
+        for ax in fig.axes:
+            ax.set_facecolor(facecolor)
+        if template.renderer == "clustered-heatmap":
+            fig.subplots_adjust(left=0.08, right=0.9, bottom=0.14, top=0.97)
+        else:
+            fig.tight_layout(pad=1.0)
+        try:
+            return _save_figure_formats(
+                fig, output_dir, template_id, formats=formats, dpi=dpi, background=facecolor,
+            )
+        finally:
+            plt.close(fig)
 
 
 def _render_to_directory(palette: Palette, output_dir: Path, *, force: bool) -> list[Path]:
